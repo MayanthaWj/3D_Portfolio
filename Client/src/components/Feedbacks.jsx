@@ -1,10 +1,9 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { motion } from "framer-motion";
-
 import { styles } from "../styles";
 import { SectionWrapper } from "../hoc";
 import { fadeIn, textVariant } from "../utils/motion";
-import { testimonials } from "../constants";
+import axios from 'axios';
 
 const FeedbackCard = ({
   index,
@@ -44,6 +43,21 @@ const FeedbackCard = ({
 );
 
 const Feedbacks = () => {
+  const [testimonialData, setTestimonialData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/user/feedbacks');
+        setTestimonialData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+  console.log("Testimonials", testimonialData)
+
   return (
     <div className={`mt-12 bg-black-100 rounded-[20px]`}>
       <div
@@ -55,7 +69,7 @@ const Feedbacks = () => {
         </motion.div>
       </div>
       <div className={`-mt-20 pb-14 ${styles.paddingX} flex flex-wrap gap-7`}>
-        {testimonials.map((testimonial, index) => (
+        {testimonialData.map((testimonial, index) => (
           <FeedbackCard key={testimonial.name} index={index} {...testimonial} />
         ))}
       </div>
